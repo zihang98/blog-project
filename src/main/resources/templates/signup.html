@@ -3,12 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <title>회원가입</title>
-    <!-- 부트스트랩 CSS 링크 -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
         .container {
             margin-top: 50px;
-            max-width: 500px; /* 폼의 최대 너비 설정 */
+            max-width: 500px;
         }
 
         .form-group {
@@ -23,11 +22,12 @@
 <body>
 <div class="container">
     <h2 class="text-center">회원가입</h2>
-    <form th:action="@{/signup}" th:object="${user}" method="post">
+    <form id="signupForm" th:action="@{/signup}" th:object="${user}" method="post">
         <div class="form-group">
             <label for="idInput">ID</label>
             <div class="input-group">
-                <input type="text" class="form-control" id="idInput" th:field="*{id}" placeholder="ID를 입력하세요" required>
+                <input type="text" class="form-control" id="idInput" th:field="*{userName}" placeholder="ID를 입력하세요"
+                       required>
                 <div class="input-group-append">
                     <button type="button" class="btn btn-primary" id="checkDuplicateBtn">중복 확인</button>
                 </div>
@@ -64,17 +64,29 @@
 
         fetch(`/check-duplicate?id=${encodeURIComponent(userId)}`)
             .then(response => response.json())
-            .then(data => {
-                if (data) {
+            .then(isDuplicate => {
+                if (isDuplicate) {
                     idHelpBlock.textContent = '이미 사용 중인 ID입니다.';
+                    document.getElementById('idInput').setAttribute('data-duplicate', 'true');
                 } else {
                     idHelpBlock.textContent = '사용 가능한 ID입니다.';
+                    document.getElementById('idInput').removeAttribute('data-duplicate');
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
                 idHelpBlock.textContent = 'ID 중복 확인 중 오류가 발생했습니다.';
             });
+    });
+
+    document.getElementById('signupForm').addEventListener('submit', function (event) {
+        var userIdInput = document.getElementById('idInput');
+        var idHelpBlock = document.getElementById('idHelpBlock');
+
+        if (userIdInput.getAttribute('data-duplicate') === 'true') {
+            event.preventDefault();
+            idHelpBlock.textContent = 'ID가 중복됩니다. 다른 ID를 입력하세요.';
+        }
     });
 </script>
 </body>

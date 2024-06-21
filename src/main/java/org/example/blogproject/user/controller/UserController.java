@@ -23,7 +23,6 @@ public class UserController {
     @PostMapping("/signup")
     public String userReg(@ModelAttribute("user") User user, Model model) {
 
-
         userService.saveUser(user);
 
         model.addAttribute("message", user.toString() + "회원가입 완료");
