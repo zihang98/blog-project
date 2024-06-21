@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>belog</title>
+    <title>로그인</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -15,6 +15,7 @@
             height: 100vh;
             background-color: #f8f9fa;
         }
+
         .container {
             background-color: #fff;
             padding: 20px;
@@ -22,11 +23,13 @@
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             text-align: center;
         }
+
         .container h2 {
             margin-bottom: 20px;
             font-size: 24px;
             color: #333;
         }
+
         .container input {
             width: 100%;
             padding: 10px;
@@ -34,6 +37,7 @@
             border: 1px solid #ccc;
             border-radius: 4px;
         }
+
         .container button {
             width: 100%;
             padding: 10px;
@@ -45,29 +49,27 @@
             font-size: 16px;
             cursor: pointer;
         }
+
         .container button:hover {
             background-color: #0056b3;
+        }
+
+        .error-message {
+            color: red;
+            margin-bottom: 15px;
         }
     </style>
 </head>
 <body>
 <div class="container">
     <h2>로그인</h2>
-    <input type="text" placeholder="ID" id="id">
-    <input type="password" placeholder="비밀번호" id="password">
-    <button onclick="login()">로그인</button>
-    <button onclick="signup()">회원가입</button>
+    <form th:action="@{/login}" method="post">
+        <div th:if="${error}" class="error-message" th:text="${error}"></div>
+        <input type="text" placeholder="ID" name="userName" required>
+        <input type="password" placeholder="비밀번호" name="password" required>
+        <button type="submit">로그인</button>
+    </form>
+    <button onclick="window.location.href='/signup'">회원가입</button>
 </div>
-<script>
-    function login() {
-        // 로그인 로직을 여기에 추가하세요
-        alert('로그인 버튼 클릭됨');
-    }
-
-    function signup() {
-        // 회원가입 로직을 여기에 추가하세요
-        alert('회원가입 버튼 클릭됨');
-    }
-</script>
 </body>
 </html>

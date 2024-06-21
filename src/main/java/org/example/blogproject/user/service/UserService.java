@@ -40,8 +40,25 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public boolean isDuplicate(String userName) {
-        //System.out.println(userRepository.findByUserName(userName));
+    public boolean isDuplicate(String userName) { // 회원가입 시 id중복 체크
         return userRepository.findByUserName(userName) != null;
+    }
+
+    @Transactional(readOnly = true)
+    public boolean isAuthenticated(String userName, String password) { // 로그인 시 id, pw 체크
+        if (userRepository.findByUserName(userName) != null) {
+            if (password.equals(userRepository.findByUserName(userName).getPassword())) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
+
+    @Transactional(readOnly = true)
+    public User findByUserName(String userName) {
+        return userRepository.findByUserName(userName);
     }
 }

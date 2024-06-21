@@ -1,10 +1,16 @@
 package org.example.blogproject.user.controller;
 
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import org.example.blogproject.user.domain.User;
 import org.example.blogproject.user.service.UserService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Optional;
 
 @Controller
 public class UserController {
@@ -12,6 +18,20 @@ public class UserController {
 
     public UserController(UserService userService) {
         this.userService = userService;
+    }
+
+    @GetMapping("/home")
+    public String home(@CookieValue(name = "userName", required = false) String userName, Model model) {
+
+        if (userName == null) {
+            return "home";
+        }
+
+        User loggedUser = userService.findByUserName(userName);
+
+        model.addAttribute("loggedUser", loggedUser);
+
+        return "afterloginhome";
     }
 
     @GetMapping("/signup")
@@ -33,7 +53,37 @@ public class UserController {
     @GetMapping("/check-duplicate")
     @ResponseBody
     public boolean checkDuplicate(@RequestParam("id") String userName) {
-        System.out.println(userService.isDuplicate(userName));
         return userService.isDuplicate(userName);
+    }
+
+    @GetMapping("/login")
+    public String showLoginForm() {
+        return "loginform";
+    }
+
+    @PostMapping("/login")
+    public String login(@RequestParam("userName") String userName, @RequestParam("password") String password, Model model, HttpServletResponse response) {
+        if (userService.isAuthenticated(userName, password)) {
+            Cookie cookie = new Cookie("userName", userName);
+            cookie.setPath("/");
+            cookie.setMaxAge(24 * 60 * 60);
+
+            response.addCookie(cookie);
+
+            return "redirect:/home";
+        } else {
+            model.addAttribute("error", "id나 비밀번호가 틀렸습니다");
+            return "loginform";
+        }
+    }
+
+    @GetMapping("/logout")
+    public String logout(HttpServletResponse response, HttpServletRequest request) {
+        Cookie cookie = new Cookie("userName", null);
+        cookie.setPath("/");
+        cookie.setMaxAge(0);
+        response.addCookie(cookie);
+
+        return "redirect:/home";
     }
 }
