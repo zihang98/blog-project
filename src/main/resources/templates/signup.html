@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>회원가입</title>
+    <!-- 부트스트랩 CSS 링크 -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .container {
+            margin-top: 50px;
+            max-width: 500px; /* 폼의 최대 너비 설정 */
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        #checkDuplicateBtn {
+            margin-left: 10px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2 class="text-center">회원가입</h2>
+    <form th:action="@{/signup}" th:object="${user}" method="post">
+        <div class="form-group">
+            <label for="idInput">ID</label>
+            <div class="input-group">
+                <input type="text" class="form-control" id="idInput" th:field="*{id}" placeholder="ID를 입력하세요" required>
+                <div class="input-group-append">
+                    <button type="button" class="btn btn-primary" id="checkDuplicateBtn">중복 확인</button>
+                </div>
+            </div>
+            <small id="idHelpBlock" class="form-text text-muted"></small>
+        </div>
+        <div class="form-group">
+            <label for="passwordInput">비밀번호</label>
+            <input type="password" class="form-control" id="passwordInput" th:field="*{password}"
+                   placeholder="비밀번호를 입력하세요" required>
+        </div>
+        <div class="form-group">
+            <label for="nameInput">이름</label>
+            <input type="text" class="form-control" id="nameInput" th:field="*{name}" placeholder="이름을 입력하세요" required>
+        </div>
+        <div class="form-group">
+            <label for="emailInput">이메일</label>
+            <input type="email" class="form-control" id="emailInput" th:field="*{email}" placeholder="이메일을 입력하세요"
+                   required>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block">회원가입</button>
+    </form>
+</div>
+
+<script>
+    document.getElementById('checkDuplicateBtn').addEventListener('click', function () {
+        var userId = document.getElementById('idInput').value;
+        var idHelpBlock = document.getElementById('idHelpBlock');
+
+        if (userId === '') {
+            idHelpBlock.textContent = 'ID를 입력하세요.';
+            return;
+        }
+
+        fetch(`/check-duplicate?id=${encodeURIComponent(userId)}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data) {
+                    idHelpBlock.textContent = '이미 사용 중인 ID입니다.';
+                } else {
+                    idHelpBlock.textContent = '사용 가능한 ID입니다.';
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                idHelpBlock.textContent = 'ID 중복 확인 중 오류가 발생했습니다.';
+            });
+    });
+</script>
+</body>
+</html>
