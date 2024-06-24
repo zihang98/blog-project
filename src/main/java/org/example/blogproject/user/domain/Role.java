@@ -15,11 +15,15 @@ import java.util.List;
 @Setter
 public class Role {
     @Id
-    //@GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(unique = true, nullable = false)
-    private String name; // 역할 : role_user, role_admin 2가지가 있음
+    @Column(nullable = false)
+    private String name; // 역할 : role_user, role_admin 2가지가 있음...enum을 쓸 수 있는지?
 
     @OneToMany(mappedBy = "role", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<UserRole> userRoles = new ArrayList<>();
+
+    public Role(String name) {
+        this.name = name;
+    }
 }

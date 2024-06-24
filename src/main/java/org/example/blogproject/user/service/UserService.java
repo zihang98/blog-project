@@ -1,6 +1,7 @@
 package org.example.blogproject.user.service;
 
 import lombok.RequiredArgsConstructor;
+import org.example.blogproject.user.domain.Role;
 import org.example.blogproject.user.domain.User;
 import org.example.blogproject.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;

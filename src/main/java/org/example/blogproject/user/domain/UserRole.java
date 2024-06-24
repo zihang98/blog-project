@@ -11,7 +11,7 @@ import java.util.List;
 @NoArgsConstructor
 public class UserRole {
     @Id
-    //@GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -21,4 +21,9 @@ public class UserRole {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "role_id")
     private Role role;
+
+    public UserRole(final User user, final Role role) {
+        this.user = user;
+        this.role = role;
+    }
 }
