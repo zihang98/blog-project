@@ -1,10 +1,130 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>마이페이지</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+        }
+
+        .header a {
+            color: #fff;
+            text-decoration: none;
+            margin: 0 10px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .container h2 {
+            margin-bottom: 20px;
+            font-size: 24px;
+            color: #333;
+        }
+
+        .profile {
+            margin-bottom: 30px;
+        }
+
+        .profile dt {
+            font-weight: bold;
+        }
+
+        .profile dd {
+            margin: 0 0 10px 0;
+        }
+
+        .posts {
+            margin-top: 30px;
+        }
+
+        .post {
+            border-bottom: 1px solid #ccc;
+            padding: 10px 0;
+        }
+
+        .post h3 {
+            margin: 0;
+            font-size: 20px;
+            color: #007bff;
+        }
+
+        .post p {
+            margin: 5px 0;
+            color: #666;
+        }
+
+        .post a {
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        .post a:hover {
+            text-decoration: underline;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            margin-top: 20px;
+            background-color: #007bff;
+            color: #fff;
+            border-radius: 4px;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            background-color: #0056b3;
+        }
+    </style>
 </head>
 <body>
-
+<div class="header">
+    <div><a href="/home">belog</a></div>
+    <div>
+        <a href="/mypage">내 정보</a>
+        <a href="/logout">로그아웃</a>
+    </div>
+</div>
+<div class="container">
+    <h2>내 정보</h2>
+    <div class="profile">
+        <dl>
+            <dt>이름:</dt>
+            <dd th:text="${user.name}">User Name</dd>
+            <dt>이메일:</dt>
+            <dd th:text="${user.email}">user@example.com</dd>
+        </dl>
+    </div>
+    <a href="/write" class="btn">글쓰기</a>
+    <div class="posts">
+        <h2>내가 쓴 글들</h2>
+        <div th:each="post : ${posts}" class="post">
+            <h3><a th:href="@{/posts/{id}(id=${post.id})}" th:text="${post.title}">Post Title</a></h3>
+            <p th:text="${post.content}">Post content preview...</p>
+        </div>
+    </div>
+</div>
 </body>
 </html>
