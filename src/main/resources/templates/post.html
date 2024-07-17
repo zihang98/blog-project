@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Post</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f8f9fa;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 20px;
+            background-color: #343a40;
+            color: #fff;
+        }
+
+        .header a {
+            color: #fff;
+            text-decoration: none;
+            padding: 0 10px;
+        }
+
+        .container {
+            width: 80%;
+            margin: 20px auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .content {
+            margin-bottom: 20px;
+        }
+
+        .content h2 {
+            margin-bottom: 20px;
+        }
+
+        .temp-label {
+            color: red;
+        }
+
+        .likes-comments {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .comments {
+            margin-top: 20px;
+        }
+
+        .comment {
+            border-bottom: 1px solid #ccc;
+            padding: 10px 0;
+        }
+    </style>
+</head>
+<body>
+<div class="header">
+    <div><a href="/">belog</a></div>
+    <div>
+        <a href="/mypage">내 정보</a>
+        <a href="/logout">로그아웃</a>
+    </div>
+</div>
+<div class="container">
+    <div class="content">
+        <h2 th:text="${post.title}">게시물 제목</h2>
+        <p th:if="${post.isTemp}" class="temp-label">임시저장된 글</p>
+        <p th:text="${post.content}">게시물 내용</p>
+    </div>
+    <div class="likes-comments" th:if="${!post.isTemp}">
+        <div>
+            <button>좋아요</button>
+            <p th:text="'좋아요 ' + ${post.likeCount} + '개'">좋아요 0개</p>
+        </div>
+    </div>
+    <div class="comments">
+        <h3>댓글</h3>
+        <form th:action="@{/posts/{id}/comments(id=${post.id})}" method="post">
+            <textarea name="content" rows="3" placeholder="댓글을 입력하세요..."></textarea>
+            <button type="submit">댓글 달기</button>
+        </form>
+        <div class="comment" th:each="comment : ${post.comments}">
+            <p th:text="${comment.content}">댓글 내용</p>
+        </div>
+    </div>
+</div>
+</body>
+</html>
