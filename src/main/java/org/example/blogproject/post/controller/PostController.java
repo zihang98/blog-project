@@ -3,6 +3,7 @@ package org.example.blogproject.post.controller;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.example.blogproject.post.domain.Comment;
 import org.example.blogproject.post.domain.Post;
 import org.example.blogproject.post.service.CommentService;
 import org.example.blogproject.post.service.PostService;
@@ -10,10 +11,7 @@ import org.example.blogproject.user.domain.User;
 import org.example.blogproject.user.service.UserService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -25,25 +23,12 @@ public class PostController {
     private final UserService userService;
 
     @GetMapping("/mypage")
-    public String showMyPage(HttpServletRequest request, Model model) {
-        String userName = null;
-        Cookie[] cookies = request.getCookies();
-
-        if (cookies != null) {
-            for (Cookie cookie : cookies) {
-                if (cookie.getName().equals("userName")) {
-                    userName = cookie.getValue();
-                    break;
-                }
-            }
-        }
+    public String showMyPage(Model model, @CookieValue(value = "userName", required = false) String userName) {
+        System.out.println(userName);
 
         if (userName != null) {
             User user = userService.findByUserName(userName);
             model.addAttribute("user", user);
-
-            List<Post> posts = postService.findByUserId(user.getId());
-            model.addAttribute("posts", posts);
         }
 
         return "mypage";
@@ -72,5 +57,25 @@ public class PostController {
         post.setTemp(isTemp);
         postService.savePost(post);
         return "redirect:/mypage";
+    }
+
+    @GetMapping("/posts/{id}")
+    public String showPost(@PathVariable("id") Long id, Model model) {
+        Post post = postService.findById(id);
+
+        model.addAttribute("post", post);
+
+        model.addAttribute("newComment", new Comment());
+
+        return "post";
+    }
+
+    @PostMapping("/posts/{id}/comments")
+    public String addComment(@PathVariable(name = "id") Long id, @ModelAttribute("newComment") Comment newComment, Model model) {
+        Post post = postService.findById(id);
+        newComment.setPost(post);
+        commentService.saveComment(newComment);
+
+        return "redirect:/posts/" + id;
     }
 }

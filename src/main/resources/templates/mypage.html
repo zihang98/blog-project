@@ -3,127 +3,106 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>마이페이지</title>
+    <title>My Page</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f8f9fa;
             margin: 0;
-            padding: 20px;
+            padding: 0;
+            background-color: #f8f9fa;
         }
 
         .header {
             display: flex;
             justify-content: space-between;
-            align-items: center;
             padding: 10px 20px;
-            background-color: #007bff;
+            background-color: #343a40;
             color: #fff;
         }
 
         .header a {
             color: #fff;
             text-decoration: none;
-            margin: 0 10px;
+            padding: 0 10px;
         }
 
         .container {
-            max-width: 800px;
-            margin: 50px auto;
+            width: 80%;
+            margin: 20px auto;
             background-color: #fff;
             padding: 20px;
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
 
-        .container h2 {
+        .profile, .posts {
             margin-bottom: 20px;
-            font-size: 24px;
-            color: #333;
         }
 
-        .profile {
-            margin-bottom: 30px;
+        .posts table {
+            width: 100%;
+            border-collapse: collapse;
         }
 
-        .profile dt {
-            font-weight: bold;
+        .posts table, .posts th, .posts td {
+            border: 1px solid #ccc;
         }
 
-        .profile dd {
-            margin: 0 0 10px 0;
+        .posts th, .posts td {
+            padding: 10px;
+            text-align: left;
         }
 
-        .posts {
-            margin-top: 30px;
+        .posts th {
+            background-color: #f1f1f1;
         }
 
-        .post {
-            border-bottom: 1px solid #ccc;
-            padding: 10px 0;
-        }
-
-        .post h3 {
-            margin: 0;
-            font-size: 20px;
-            color: #007bff;
-        }
-
-        .post p {
-            margin: 5px 0;
-            color: #666;
-        }
-
-        .post a {
-            color: #007bff;
-            text-decoration: none;
-        }
-
-        .post a:hover {
-            text-decoration: underline;
-        }
-
-        .btn {
-            display: inline-block;
-            padding: 10px 20px;
-            margin-top: 20px;
-            background-color: #007bff;
-            color: #fff;
-            border-radius: 4px;
-            text-decoration: none;
-            cursor: pointer;
-        }
-
-        .btn:hover {
-            background-color: #0056b3;
+        .temp-label {
+            color: red;
         }
     </style>
 </head>
 <body>
 <div class="header">
-    <div><a href="/home">belog</a></div>
+    <div><a href="/">belog</a></div>
     <div>
         <a href="/mypage">내 정보</a>
         <a href="/logout">로그아웃</a>
     </div>
 </div>
 <div class="container">
-    <h2>내 정보</h2>
     <div class="profile">
-        <dl>
-            <dt>이름:</dt>
-            <dd th:text="${user.name}">User Name</dd>
-            <dt>이메일:</dt>
-            <dd th:text="${user.email}">user@example.com</dd>
-        </dl>
+        <h2>내 프로필</h2>
+        <p>이름: <span th:text="${user.name}">사용자 이름</span></p>
+        <p>이메일: <span th:text="${user.email}">사용자 이메일</span></p>
     </div>
-    <a href="/write" class="btn">글쓰기</a>
+    <div class="write-button">
+        <a href="/write" style="text-decoration: none;">
+            <button>글 쓰기</button>
+        </a>
+    </div>
     <div class="posts">
-        <h2>내가 쓴 글들</h2>
-        <div th:each="post : ${posts}" class="post">
-            <h3><a th:href="@{/posts/{id}(id=${post.id})}" th:text="${post.title}">Post Title</a></h3>
-            <p th:text="${post.content}">Post content preview...</p>
-        </div>
+        <h2>내가 쓴 글</h2>
+        <table>
+            <thead>
+            <tr>
+                <th>제목</th>
+                <th>태그</th>
+                <th>상태</th>
+                <th>댓글 수</th>
+                <th>좋아요 수</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="post : ${user.posts}">
+                <td><a th:href="@{/posts/{id}(id=${post.id})}" th:text="${post.title}">게시물 제목</a></td>
+                <td th:text="${post.tag}">태그</td>
+                <td><span th:if="${post.isTemp}" class="temp-label">임시저장된 글</span></td>
+                <td th:if="${!post.isTemp}" th:text="${post.comments.size()}">0</td>
+                <td th:if="${!post.isTemp}" th:text="${post.likeCount}">0</td>
+            </tr>
+            </tbody>
+        </table>
     </div>
 </div>
 </body>
