@@ -33,4 +33,7 @@ public class PostService {
         postRepository.delete(post);
     }
 
+    public void plusCommentCount(Post post) {
+        post.setCommentCount(post.getCommentCount() + 1);
+    }
 }

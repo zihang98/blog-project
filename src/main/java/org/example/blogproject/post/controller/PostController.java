@@ -65,17 +65,17 @@ public class PostController {
 
         model.addAttribute("post", post);
 
-        model.addAttribute("newComment", new Comment());
-
         return "post";
     }
 
     @PostMapping("/posts/{id}/comments")
-    public String addComment(@PathVariable(name = "id") Long id, @ModelAttribute("newComment") Comment newComment, Model model) {
-        Post post = postService.findById(id);
+    public String addComment(@CookieValue(name = "userName") String userName, @PathVariable(name = "id") Long postId, @ModelAttribute("newComment") Comment newComment, Model model) {
+        Post post = postService.findById(postId);
         newComment.setPost(post);
+        newComment.setUser(userService.findByUserName(userName));
         commentService.saveComment(newComment);
+        postService.plusCommentCount(post);
 
-        return "redirect:/posts/" + id;
+        return "redirect:/posts/" + postId;
     }
 }
